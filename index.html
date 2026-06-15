@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema LEAN — Guía Interactiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --navy-light: #1A2E45;
+    --yellow: #F5A623;
+    --yellow-soft: #FFC85C;
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --blue: #3498DB;
+    --gray: #4A5568;
+    --gray-light: #A0AEC0;
+    --cream: #F5F5F0;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(13,27,42,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    padding: 0 2rem;
+    border-bottom: 1px solid rgba(245,166,35,0.2);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; color: var(--yellow);
+    letter-spacing: 2px;
+  }
+  .nav-links {
+    display: flex; gap: 1.5rem; list-style: none;
+  }
+  .nav-links a {
+    color: var(--gray-light); text-decoration: none;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em;
+    text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--yellow); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 4rem 2rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(245,166,35,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(52,152,219,0.06) 0%, transparent 50%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image: linear-gradient(var(--yellow) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--yellow) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content { position: relative; text-align: center; max-width: 800px; }
+  .hero-eyebrow {
+    display: inline-block;
+    background: rgba(245,166,35,0.15);
+    border: 1px solid rgba(245,166,35,0.3);
+    color: var(--yellow);
+    padding: 0.3rem 1rem;
+    border-radius: 2px;
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 8rem);
+    line-height: 0.9;
+    color: var(--white);
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+  }
+  .hero-title span { color: var(--yellow); }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--gray-light);
+    max-width: 560px; margin: 0 auto 2.5rem;
+    line-height: 1.7; font-weight: 300;
+  }
+  .hero-stats {
+    display: flex; gap: 3rem; justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem; color: var(--yellow);
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--gray-light); letter-spacing: 0.1em; text-transform: uppercase; }
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: var(--gray-light); font-size: 0.7rem; letter-spacing: 0.1em;
+    text-transform: uppercase; animation: bounce 2s infinite;
+  }
+  .scroll-hint svg { width: 20px; height: 20px; }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* SECTIONS */
+  section { padding: 6rem 2rem; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-eyebrow {
+    display: inline-block; color: var(--yellow);
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--white); letter-spacing: 2px; line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .section-desc { color: var(--gray-light); max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+  /* QUÉ ES LEAN */
+  #que-es { background: var(--navy-light); }
+  .lean-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3rem; align-items: center;
+  }
+  .lean-text h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; color: var(--yellow); letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+  .lean-text p { color: var(--gray-light); line-height: 1.8; margin-bottom: 1rem; }
+  .lean-objectives {
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .obj-card {
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-left: 3px solid var(--yellow);
+    padding: 1rem 1.25rem; border-radius: 0 4px 4px 0;
+  }
+  .obj-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--yellow); }
+  .obj-text { color: var(--cream); font-size: 0.9rem; line-height: 1.5; }
+
+  /* PÉRDIDAS — FLIP CARDS */
+  #perdidas { background: var(--navy); }
+  .perdidas-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .flip-card { height: 200px; perspective: 1000px; cursor: pointer; }
+  .flip-inner {
+    width: 100%; height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  .flip-card:hover .flip-inner,
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back {
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 6px; padding: 1.5rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .flip-front {
+    background: var(--navy-light);
+    border: 1px solid rgba(255,255,255,0.08);
+    align-items: center; text-align: center;
+  }
+  .flip-back {
+    background: var(--navy-light);
+    border: 1px solid rgba(245,166,35,0.3);
+    transform: rotateY(180deg);
+  }
+  .perdida-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .perdida-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; letter-spacing: 1px; color: var(--white);
+  }
+  .perdida-tag {
+    display: inline-block; background: rgba(245,166,35,0.15);
+    color: var(--yellow); font-size: 0.65rem;
+    padding: 0.2rem 0.6rem; border-radius: 2px;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.5rem;
+  }
+  .flip-back p { color: var(--gray-light); font-size: 0.85rem; line-height: 1.6; }
+  .flip-hint {
+    text-align: center; color: var(--gray); font-size: 0.75rem;
+    margin-top: 1.5rem; letter-spacing: 0.05em;
+  }
+
+  /* PILARES */
+  #pilares { background: var(--navy-light); }
+  .pilares-tabs {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    justify-content: center; margin-bottom: 2.5rem;
+  }
+  .pilar-tab {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--gray-light); padding: 0.5rem 1rem;
+    border-radius: 4px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 0.8rem;
+    font-weight: 500; transition: all 0.2s;
+  }
+  .pilar-tab:hover { border-color: var(--yellow); color: var(--yellow); }
+  .pilar-tab.active {
+    background: var(--yellow); border-color: var(--yellow);
+    color: var(--navy); font-weight: 700;
+  }
+  .pilar-panel { display: none; }
+  .pilar-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .pilar-content {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 2.5rem;
+    display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: start;
+  }
+  .pilar-icon-big { font-size: 4rem; }
+  .pilar-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; color: var(--yellow); letter-spacing: 1px; margin-bottom: 0.5rem;
+  }
+  .pilar-objective {
+    color: var(--green); font-size: 0.85rem; font-weight: 600;
+    margin-bottom: 1rem; letter-spacing: 0.02em;
+  }
+  .pilar-desc { color: var(--gray-light); line-height: 1.8; }
+
+  /* GESTIÓN AUTÓNOMA — PASOS */
+  #ga { background: var(--navy); }
+  .pasos-timeline {
+    position: relative; max-width: 900px; margin: 0 auto;
+  }
+  .pasos-timeline::before {
+    content: ''; position: absolute; left: 40px; top: 0; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, var(--yellow), rgba(245,166,35,0.1));
+  }
+  .paso-item {
+    display: flex; gap: 2rem; align-items: flex-start;
+    margin-bottom: 2rem; cursor: pointer;
+  }
+  .paso-num {
+    flex-shrink: 0; width: 80px; height: 80px;
+    background: var(--navy-light);
+    border: 2px solid rgba(245,166,35,0.3);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--yellow);
+    position: relative; z-index: 1;
+    transition: all 0.2s;
+  }
+  .paso-item:hover .paso-num,
+  .paso-item.open .paso-num {
+    background: var(--yellow); color: var(--navy); border-color: var(--yellow);
+  }
+  .paso-body { flex: 1; padding-top: 1rem; }
+  .paso-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; color: var(--white); letter-spacing: 1px; margin-bottom: 0.25rem;
+  }
+  .paso-detail {
+    color: var(--gray-light); font-size: 0.88rem; line-height: 1.7;
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+  }
+  .paso-item.open .paso-detail { max-height: 200px; }
+
+  /* HERRAMIENTAS */
+  #herramientas { background: var(--navy-light); }
+  .tools-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .tool-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px; padding: 1.5rem;
+    transition: all 0.2s;
+  }
+  .tool-card:hover {
+    border-color: rgba(245,166,35,0.4);
+    background: rgba(245,166,35,0.04);
+    transform: translateY(-2px);
+  }
+  .tool-abbr {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; color: var(--yellow); letter-spacing: 2px;
+  }
+  .tool-name { color: var(--white); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .tool-desc { color: var(--gray-light); font-size: 0.82rem; line-height: 1.6; }
+
+  /* QUIZ */
+  #quiz { background: var(--navy); }
+  .quiz-box {
+    max-width: 700px; margin: 0 auto;
+    background: var(--navy-light); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 2.5rem;
+  }
+  .quiz-progress {
+    background: rgba(255,255,255,0.08); height: 4px;
+    border-radius: 2px; margin-bottom: 2rem;
+  }
+  .quiz-bar {
+    height: 100%; background: var(--yellow);
+    border-radius: 2px; transition: width 0.4s ease;
+  }
+  .quiz-q { font-size: 1.05rem; color: var(--white); line-height: 1.6; margin-bottom: 1.5rem; font-weight: 500; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.75rem; }
+  .quiz-opt {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--gray-light); padding: 0.9rem 1.25rem;
+    border-radius: 4px; cursor: pointer; text-align: left;
+    font-family: 'Inter', sans-serif; font-size: 0.9rem;
+    transition: all 0.15s;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--yellow); color: var(--yellow); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(46,204,113,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(231,76,60,0.1); color: var(--red); }
+  .quiz-feedback {
+    margin-top: 1rem; padding: 1rem; border-radius: 4px;
+    font-size: 0.88rem; line-height: 1.6; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.3); }
+  .quiz-feedback.fail { background: rgba(231,76,60,0.1); color: #ff9999; border: 1px solid rgba(231,76,60,0.3); }
+  .quiz-next {
+    margin-top: 1.5rem; background: var(--yellow); color: var(--navy);
+    border: none; padding: 0.8rem 2rem; border-radius: 4px;
+    font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; display: none; transition: opacity 0.2s;
+  }
+  .quiz-next:hover { opacity: 0.85; }
+  .quiz-next.show { display: inline-block; }
+  .quiz-counter { color: var(--gray-light); font-size: 0.8rem; margin-bottom: 1.5rem; }
+  .quiz-result { text-align: center; }
+  .quiz-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem; color: var(--yellow); line-height: 1;
+  }
+  .quiz-score-msg { color: var(--gray-light); margin: 1rem 0 2rem; }
+  .quiz-restart {
+    background: transparent; border: 1px solid var(--yellow);
+    color: var(--yellow); padding: 0.8rem 2rem; border-radius: 4px;
+    cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;
+    transition: all 0.2s;
+  }
+  .quiz-restart:hover { background: var(--yellow); color: var(--navy); }
+
+  /* OEE VISUAL */
+  #oee { background: var(--navy-light); }
+  .oee-formula {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem; flex-wrap: wrap; margin: 2rem 0 3rem;
+  }
+  .oee-factor {
+    text-align: center; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+    padding: 1.25rem 1.75rem;
+  }
+  .oee-factor-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .oee-factor-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; color: var(--white); letter-spacing: 1px;
+  }
+  .oee-factor-sub { font-size: 0.75rem; color: var(--gray-light); }
+  .oee-times {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem; color: var(--yellow); line-height: 1;
+  }
+  .oee-equals { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--gray-light); }
+  .oee-result {
+    text-align: center; background: rgba(245,166,35,0.1);
+    border: 2px solid var(--yellow); border-radius: 6px;
+    padding: 1.25rem 1.75rem;
+  }
+  .oee-result-name { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--yellow); letter-spacing: 2px; }
+  .oee-result-sub { font-size: 0.75rem; color: var(--gray-light); }
+
+  /* ANORMALIDADES */
+  #anormalidades { background: var(--navy); }
+  .anorm-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+  .anorm-card {
+    background: var(--navy-light);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px; padding: 1.25rem;
+    border-top: 3px solid var(--yellow);
+  }
+  .anorm-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem; color: rgba(245,166,35,0.2); line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .anorm-name { color: var(--white); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .anorm-ex { color: var(--gray-light); font-size: 0.78rem; line-height: 1.5; }
+
+  /* FOOTER */
+  footer {
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(245,166,35,0.1);
+    padding: 2rem; text-align: center;
+    color: var(--gray); font-size: 0.8rem;
+  }
+
+  /* ANIMATIONS */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media(max-width: 768px) {
+    nav { display: none; }
+    .lean-grid { grid-template-columns: 1fr; }
+    .pilar-content { grid-template-columns: 1fr; }
+    .oee-formula { gap: 0.5rem; }
+    .oee-factor { padding: 0.75rem 1rem; }
+    .pasos-timeline::before { left: 30px; }
+    .paso-num { width: 60px; height: 60px; font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">LEAN SYSTEM</span>
+    <ul class="nav-links">
+      <li><a href="#que-es">¿Qué es?</a></li>
+      <li><a href="#perdidas">Pérdidas</a></li>
+      <li><a href="#pilares">Pilares</a></li>
+      <li><a href="#ga">Gestión Autónoma</a></li>
+      <li><a href="#herramientas">Herramientas</a></li>
+      <li><a href="#oee">OEE</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Metodología de Mejora Continua</div>
+    <h1 class="hero-title">SISTEMA<br><span>LEAN</span></h1>
+    <p class="hero-sub">Genera un ambiente de desarrollo de capacidades y mejora continua, maximiza el valor y minimiza las pérdidas — creando valor real en cada proceso.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">Pilares LEAN</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Tipos de Pérdidas</div></div>
+      <div class="stat"><div class="stat-num">8</div><div class="stat-label">Pasos de GA</div></div>
+      <div class="stat"><div class="stat-num">7</div><div class="stat-label">Anormalidades</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Explorar
+  </div>
+</section>
+
+<!-- QUÉ ES LEAN -->
+<section id="que-es">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Fundamentos</span>
+      <h2 class="section-title">¿Qué es LEAN?</h2>
+      <p class="section-desc">Un sistema integral que identifica y elimina pérdidas, mientras desarrolla las capacidades que necesita la organización.</p>
+    </div>
+    <div class="lean-grid reveal">
+      <div class="lean-text">
+        <h3>Propósito Central</h3>
+        <p>LEAN sirve para <strong style="color:var(--yellow)">identificar y eliminar pérdidas</strong> y también para <strong style="color:var(--yellow)">desarrollar las capacidades</strong> que necesitamos como organización.</p>
+        <p>Promueve el trabajo en equipo, maximiza la utilización de los activos y garantiza la generación de productos de alta calidad a costos competitivos.</p>
+        <p style="margin-top:1.5rem; color: var(--cream); font-size:0.85rem; font-style:italic; border-left:2px solid var(--yellow); padding-left:1rem;">
+          "Hacia cero pérdidas, hacia una cultura de alto desempeño"
+        </p>
+      </div>
+      <div class="lean-objectives">
+        <div class="obj-card">
+          <div class="obj-num">01</div>
+          <div class="obj-text"><strong>Sistematización de la erradicación de pérdidas</strong> — Hacia cero pérdidas en todos los procesos de la organización.</div>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">02</div>
+          <div class="obj-text"><strong>Desarrollo de capacidades</strong> — Hacia una cultura de alto desempeño que se mantiene y crece con el tiempo.</div>
+        </div>
+        <div style="background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.2); border-left: 3px solid var(--green); padding: 1rem 1.25rem; border-radius: 0 4px 4px 0;">
+          <div style="color:var(--green); font-size:0.75rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">Beneficio clave</div>
+          <div style="color:var(--cream); font-size:0.88rem; line-height:1.6;">Reeduca a las personas para la prevención y la mejora continua, aumentando la confiabilidad de las 4Ms: Máquinas, Métodos, Mano de obra y Materiales.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PÉRDIDAS -->
+<section id="perdidas">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Identificar para Eliminar</span>
+      <h2 class="section-title">Tipos de Pérdidas</h2>
+      <p class="section-desc">Las pérdidas son todo aquello que consume tiempo, esfuerzo o recursos sin generar valor. Toca cada tarjeta para descubrir el detalle.</p>
+    </div>
+    <div class="perdidas-grid reveal">
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="perdida-icon">⚠️</div>
+            <div class="perdida-name">Accidentes</div>
+            <div class="perdida-tag">Seguridad</div>
+          </div>
+          <div class="flip-back">
+            <p>Pone en riesgo la vida de las personas y genera pérdidas adicionales: visitas médicas, rehabilitación, pérdida de tiempo productivo. Un amago de incendio puede dañar equipos e instalaciones.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="perdida-icon">🔧</div>
+            <div class="perdida-name">Averías</div>
+            <div class="perdida-tag">Equipos</div>
+          </div>
+          <div class="flip-back">
+            <p>Una avería en un equipo crítico puede originar la parada TOTAL de planta, ocasionando pérdida de tiempo, esfuerzo y dinero, y podría perjudicar la calidad del producto final.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="perdida-icon">🗓️</div>
+            <div class="perdida-name">Reuniones Innecesarias</div>
+            <div class="perdida-tag">Tiempo</div>
+          </div>
+          <div class="flip-back">
+            <p>Si agendamos una reunión para temas que se pueden resolver por correo o mensaje, perdemos tiempo y esfuerzo que pudimos invertir en actividades de mayor valor.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="perdida-icon">🗃️</div>
+            <div class="perdida-name">Desorden</div>
+            <div class="perdida-tag">Organización</div>
+          </div>
+          <div class="flip-back">
+            <p>Un puesto de trabajo desordenado genera pérdida de tiempo al buscar herramientas y materiales. El desorden también puede ocasionar accidentes.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="perdida-icon">📉</div>
+            <div class="perdida-name">Calidad</div>
+            <div class="perdida-tag">Producto</div>
+          </div>
+          <div class="flip-back">
+            <p>Producir con diferente calidad tiene el mismo costo, pero hay gran diferencia en el precio de venta. El reproceso por humedad excesiva genera gastos adicionales en combustible, electricidad e insumos.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="perdida-icon">🔁</div>
+            <div class="perdida-name">Retrabajos</div>
+            <div class="perdida-tag">Proceso</div>
+          </div>
+          <div class="flip-back">
+            <p>Hacer las cosas rápido "para salir del paso" puede resultar en errores que obligan a repetir la tarea. Esto origina pérdida de esfuerzo y tiempo valioso.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="flip-hint" style="margin-top:1.5rem;">👆 Toca o pasa el cursor sobre las tarjetas para ver el detalle</p>
+  </div>
+</section>
+
+<!-- 10 PILARES -->
+<section id="pilares">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Estructura del Sistema</span>
+      <h2 class="section-title">Los 10 Pilares LEAN</h2>
+      <p class="section-desc">Cada pilar contribuye a la transformación hacia una cultura organizacional de alto desempeño y resultados de clase mundial.</p>
+    </div>
+    <div class="pilares-tabs reveal" id="pilarTabs">
+      <button class="pilar-tab active" data-pilar="0">Liderazgo</button>
+      <button class="pilar-tab" data-pilar="1">Gestión Autónoma</button>
+      <button class="pilar-tab" data-pilar="2">Mejora Enfocada</button>
+      <button class="pilar-tab" data-pilar="3">Gestión de Calidad</button>
+      <button class="pilar-tab" data-pilar="4">Seguridad y Salud</button>
+      <button class="pilar-tab" data-pilar="5">Mant. Progresivo</button>
+      <button class="pilar-tab" data-pilar="6">Educación</button>
+      <button class="pilar-tab" data-pilar="7">Gestión Iniciativas</button>
+      <button class="pilar-tab" data-pilar="8">Organización</button>
+      <button class="pilar-tab" data-pilar="9">Red de Abastecimiento</button>
+    </div>
+    <div id="pilarPanels">
+      <div class="pilar-panel active pilar-content">
+        <div class="pilar-icon-big">🏆</div>
+        <div>
+          <div class="pilar-title">Liderazgo</div>
+          <div class="pilar-objective">✦ Mejora el lineamiento de objetivos y metas</div>
+          <p class="pilar-desc">Contribuye a todo el equipo para lograr el 100% de eficiencia en la implementación LEAN. El liderazgo efectivo es la base que sostiene todos los demás pilares, asegurando la alineación de toda la organización hacia los mismos objetivos de mejora continua.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">⚙️</div>
+        <div>
+          <div class="pilar-title">Gestión Autónoma</div>
+          <div class="pilar-objective">✦ Mejora la operación y cuidado de los equipos</div>
+          <p class="pilar-desc">Empoderar a los colaboradores de su máquina y lugar de trabajo. Alcanzar la excelencia operacional a través de la formación de equipos autónomos que pueden restablecer y mantener las condiciones básicas de trabajo. El objetivo es: Cero Accidentes, Cero Contaminación, Cero Defectos y Cero Fallas.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">🎯</div>
+        <div>
+          <div class="pilar-title">Mejora Enfocada</div>
+          <div class="pilar-objective">✦ Identificación de actividades que destruyen valor</div>
+          <p class="pilar-desc">Maximizar la eficiencia del sistema productivo a través de la eliminación de pérdidas en toda la empresa. Utiliza herramientas como OEE, Árbol de Pérdidas, Ciclos de Mejora y Análisis de Causa Raíz para identificar y atacar las pérdidas de mayor impacto.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">✅</div>
+        <div>
+          <div class="pilar-title">Gestión de Calidad</div>
+          <div class="pilar-objective">✦ Mejora el producto previniendo la aparición de defectos</div>
+          <p class="pilar-desc">Construir la capacidad para producir 0 defectos de calidad, asegurar el cumplimiento regulatorio y eliminar las pérdidas relacionadas a calidad. Trabaja con los CTQ (Parámetros Críticos de Calidad) y CTP (Parámetros Críticos de Proceso) para mantener los estándares.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">🦺</div>
+        <div>
+          <div class="pilar-title">Seguridad, Salud y Ambiente</div>
+          <div class="pilar-objective">✦ Elimina riesgos de accidente y contaminación</div>
+          <p class="pilar-desc">Constituir una metodología orientada a la eliminación de incidentes, desarrollando cultura en la prevención de accidentes, enfermedades e impactos ambientales, generando un ambiente de trabajo seguro, saludable y confortable para todos los colaboradores.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">🔩</div>
+        <div>
+          <div class="pilar-title">Mantenimiento Progresivo</div>
+          <div class="pilar-objective">✦ Mejora la confiabilidad y mantenibilidad — Alcanzar 0 Fallas</div>
+          <p class="pilar-desc">Asegurar y mantener la confiabilidad de las máquinas y su interacción con los procesos, de forma eficiente y segura, para la obtención de productos de excelente calidad. La Matriz Modo Fallo Componente (MMFC) es la herramienta clave para gestionar las fallas.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">📚</div>
+        <div>
+          <div class="pilar-title">Educación y Entrenamiento</div>
+          <div class="pilar-objective">✦ Mejora las competencias y habilidades del equipo</div>
+          <p class="pilar-desc">Desarrollar habilidades en las personas para garantizar altos niveles de desempeño en su puesto de trabajo. Utiliza la Matriz de Habilidades, Lecciones de Un Punto (LUP), capacitaciones CAD y el modelo "todos son maestros y todos son estudiantes".</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">🚀</div>
+        <div>
+          <div class="pilar-title">Gestión de Iniciativas</div>
+          <div class="pilar-objective">✦ Arranque y gestión de nuevos proyectos</div>
+          <p class="pilar-desc">Asegurar la capacidad para entregar nuevas iniciativas de productos con 0 defectos y arranques verticales, cumpliendo con los requerimientos de costos y tiempos establecidos. Garantiza que cada nuevo proyecto sea un éxito desde el primer día.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">🏗️</div>
+        <div>
+          <div class="pilar-title">Organización</div>
+          <div class="pilar-objective">✦ Estructuras adecuadas para los procesos</div>
+          <p class="pilar-desc">Facilitar la implementación de los sistemas, herramientas y metodologías de cada pilar, promoviendo la transformación de la operación hacia una cultura organizacional de alto desempeño y resultados de clase mundial a través de estructuras bien diseñadas.</p>
+        </div>
+      </div>
+      <div class="pilar-panel pilar-content">
+        <div class="pilar-icon-big">🔗</div>
+        <div>
+          <div class="pilar-title">Red de Abastecimiento</div>
+          <div class="pilar-objective">✦ Calidad en el abastecimiento de materia prima</div>
+          <p class="pilar-desc">Asegurar la eficiencia del proceso de abastecimiento de materia prima para eliminar pérdidas en la operación integrada. La calidad comienza con la materia prima; este pilar garantiza que todo el proceso productivo tenga los insumos necesarios en el momento y calidad correctos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GESTIÓN AUTÓNOMA — PASOS -->
+<section id="ga">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Pilar de Gestión Autónoma</span>
+      <h2 class="section-title">Los 8 Pasos de GA</h2>
+      <p class="section-desc">Una ruta progresiva hacia el control autónomo pleno del lugar de trabajo y los equipos.</p>
+    </div>
+    <div class="pasos-timeline reveal" id="pasosTimeline">
+      <div class="paso-item">
+        <div class="paso-num">0</div>
+        <div class="paso-body">
+          <div class="paso-name">Clasificación y Orden</div>
+          <div class="paso-detail">Transformar el lugar de trabajo por medio de la organización y orden, para que el lugar sea más agradable, seguro y limpio. Garantizando la inocuidad del producto y la seguridad del trabajador. Se aplican las primeras 3S: Clasificación, Orden y Limpieza.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">1</div>
+        <div class="paso-body">
+          <div class="paso-name">Limpieza e Inspección</div>
+          <div class="paso-detail">Identificar anormalidades a través de la limpieza e inspección utilizando los cinco sentidos. La limpieza profunda revela problemas ocultos que no se ven en la operación normal del equipo.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">2</div>
+        <div class="paso-body">
+          <div class="paso-name">Eliminación de FC y LDA</div>
+          <div class="paso-detail">Reducir tiempos de limpieza, inspección, lubricación y ajuste. Se eliminan las Fuentes de Contaminación (FC) y los Lugares de Difícil Acceso (LDA) mediante el método ECRS: Eliminar, Combinar/contener, Reducir y Simplificar.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">3</div>
+        <div class="paso-body">
+          <div class="paso-name">Estándares LILA Preliminares</div>
+          <div class="paso-detail">Garantizar el mantenimiento de los logros obtenidos en los pasos 0, 1 y 2, asegurando las condiciones básicas a través de la estandarización. LILA = Limpieza, Inspección, Lubricación y Ajuste.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">4</div>
+        <div class="paso-body">
+          <div class="paso-name">Inspección General del Equipo</div>
+          <div class="paso-detail">Requiere la habilidad de conocer las funciones y la estructura del equipo en profundidad. El operador aprende a inspeccionar todos los componentes del equipo de manera sistemática y efectiva.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">5</div>
+        <div class="paso-body">
+          <div class="paso-name">Inspección General Autónoma</div>
+          <div class="paso-detail">Requiere la habilidad de conocer con precisión el equipo y relacionarla con la calidad del producto. El operador gestiona de forma autónoma la inspección sin necesidad de supervisión constante.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">6</div>
+        <div class="paso-body">
+          <div class="paso-name">Aseguramiento de Calidad del Proceso</div>
+          <div class="paso-detail">Se requiere la habilidad de relacionar con precisión el estado del equipo con la calidad del producto final. El operador puede detectar y prevenir defectos de calidad desde su puesto de trabajo.</div>
+        </div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-num">7</div>
+        <div class="paso-body">
+          <div class="paso-name">Control Autónomo Pleno</div>
+          <div class="paso-detail">Se requiere la habilidad de gestionar autónomamente todos los aspectos de su línea de producción. El equipo opera con total independencia, manteniendo los más altos estándares sin supervisión directa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OEE -->
+<section id="oee">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Medición de Eficiencia</span>
+      <h2 class="section-title">¿Qué es el OEE?</h2>
+      <p class="section-desc">La Eficiencia Global de los Equipos es un indicador que permite medir la eficiencia con la que trabaja un equipo o proceso.</p>
+    </div>
+    <div class="oee-formula reveal">
+      <div class="oee-factor">
+        <div class="oee-factor-icon">⏱️</div>
+        <div class="oee-factor-name">Disponibilidad</div>
+        <div class="oee-factor-sub">Tiempo real operando vs. tiempo planificado</div>
+      </div>
+      <div class="oee-times">×</div>
+      <div class="oee-factor">
+        <div class="oee-factor-icon">⚡</div>
+        <div class="oee-factor-name">Desempeño</div>
+        <div class="oee-factor-sub">Velocidad real vs. velocidad objetivo</div>
+      </div>
+      <div class="oee-times">×</div>
+      <div class="oee-factor">
+        <div class="oee-factor-icon">🎯</div>
+        <div class="oee-factor-name">Calidad</div>
+        <div class="oee-factor-sub">Unidades buenas vs. unidades producidas</div>
+      </div>
+      <div class="oee-equals">=</div>
+      <div class="oee-result">
+        <div class="oee-result-name">OEE</div>
+        <div class="oee-result-sub">Eficiencia Global del Equipo</div>
+      </div>
+    </div>
+    <div class="tools-grid reveal">
+      <div class="tool-card">
+        <div class="tool-abbr" style="color:var(--red)">⛔ Disp.</div>
+        <div class="tool-name">Pérdidas por Disponibilidad</div>
+        <div class="tool-desc">Averías de equipos, paradas operacionales, limpieza por contingencia, falta de personal o insumos críticos, accidentes/incidentes.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr" style="color:var(--yellow)">📉 Desemp.</div>
+        <div class="tool-name">Pérdidas por Desempeño</div>
+        <div class="tool-desc">Arranque/fin de proceso, velocidad reducida por averías, atoros o factores operacionales.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr" style="color:var(--blue)">❌ Cal.</div>
+        <div class="tool-name">Pérdidas por Calidad</div>
+        <div class="tool-desc">Descartes de materia prima y reprocesos del producto que no cumple los estándares de calidad.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ANORMALIDADES -->
+<section id="anormalidades">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Gestión Autónoma</span>
+      <h2 class="section-title">7 Tipos de Anormalidades</h2>
+      <p class="section-desc">Identificar anormalidades es la base de la gestión autónoma. Conocer los tipos permite actuar a tiempo y prevenir problemas mayores.</p>
+    </div>
+    <div class="anorm-grid reveal">
+      <div class="anorm-card">
+        <div class="anorm-num">01</div>
+        <div class="anorm-name">Fallas Menores</div>
+        <div class="anorm-ex">Polvo, óxido, vibraciones, ruidos anormales, calentamiento, olor extraño, alteración de color.</div>
+      </div>
+      <div class="anorm-card">
+        <div class="anorm-num">02</div>
+        <div class="anorm-name">Condiciones Básicas</div>
+        <div class="anorm-ex">Falta de aceite, aceite sucio o inadecuado, escapes, tuercas mal apretadas o con rosca desgastada.</div>
+      </div>
+      <div class="anorm-card">
+        <div class="anorm-num">03</div>
+        <div class="anorm-name">Lugares de Difícil Acceso (LDA)</div>
+        <div class="anorm-ex">Estructura de la máquina que dificulta la limpieza, guardas mal posicionadas, altura inadecuada, drenaje obstruido.</div>
+      </div>
+      <div class="anorm-card">
+        <div class="anorm-num">04</div>
+        <div class="anorm-name">Fuentes de Contaminación (FC)</div>
+        <div class="anorm-ex">Escapes, caídas, chorreos, esparcimientos de materiales, lubricante, agua, vapor, gases que deterioran el equipo.</div>
+      </div>
+      <div class="anorm-card">
+        <div class="anorm-num">05</div>
+        <div class="anorm-name">Defecto de Calidad</div>
+        <div class="anorm-ex">Objetos metálicos, no metálicos, contaminantes químicos, presencia de agua industrial, incumplimiento en forma, color, olor o textura.</div>
+      </div>
+      <div class="anorm-card">
+        <div class="anorm-num">06</div>
+        <div class="anorm-name">Objetos Innecesarios</div>
+        <div class="anorm-ex">Equipos, mangueras, herramientas o materiales que ya no se usan y ocupan espacio innecesariamente en el área de trabajo.</div>
+      </div>
+      <div class="anorm-card">
+        <div class="anorm-num">07</div>
+        <div class="anorm-name">Condiciones Inseguras</div>
+        <div class="anorm-ex">Superficies irregulares, escalones sin antideslizante, mala iluminación, guardas quebradas o flojas, pisos lisos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HERRAMIENTAS -->
+<section id="herramientas">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Caja de Herramientas</span>
+      <h2 class="section-title">Herramientas Clave LEAN</h2>
+      <p class="section-desc">Conceptos y herramientas esenciales que debes conocer para participar activamente en la transformación LEAN.</p>
+    </div>
+    <div class="tools-grid reveal">
+      <div class="tool-card">
+        <div class="tool-abbr">LUP</div>
+        <div class="tool-name">Lección de Un Punto</div>
+        <div class="tool-desc">Herramienta sencilla para transferir conocimiento específico (breve y concreto). Existen 3 tipos: Conocimiento Básico, Mejoras Implementadas y Solución de Problemas. "Todos son maestros y todos son estudiantes."</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">5S</div>
+        <div class="tool-name">5S — Orden y Limpieza</div>
+        <div class="tool-desc">Clasificación (solo lo necesario), Orden (un lugar para cada cosa), Limpieza (ambiente seguro), Estandarización (gestión visual) y Disciplina (hábito de mejorar día a día).</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">ACR</div>
+        <div class="tool-name">Análisis Causa Raíz</div>
+        <div class="tool-desc">Método estándar para identificar las causas de incidentes, accidentes, desviaciones y fallas. Define acciones para solucionar de manera oportuna y prevenir la recurrencia.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">ECRS</div>
+        <div class="tool-name">Método ECRS</div>
+        <div class="tool-desc">Herramienta para definir las contramedidas a aplicar en FC y LDA: Eliminar, Combinar o Contener, Reducir y Simplificar. Permite reducir el tiempo en actividades improductivas.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">DMS</div>
+        <div class="tool-name">Sistema de Gestión Diaria</div>
+        <div class="tool-desc">Conjunto de reuniones diarias en todos los niveles de la organización, desde nivel gerencial hasta operativo, con el único fin de asegurar que se alcancen los objetivos de la compañía.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">LILA</div>
+        <div class="tool-name">Estándares LILA</div>
+        <div class="tool-desc">Establece de forma clara cómo deben realizarse las actividades de Limpieza, Inspección, Lubricación y Ajuste, asegurando que no tengan un desempeño por debajo de lo establecido.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">GEMBA</div>
+        <div class="tool-name">Gemba Walk</div>
+        <div class="tool-desc">El líder va al lugar de trabajo (Gemba) para reforzar liderazgo, confirmar condiciones, mostrar respeto a los colaboradores, reforzar estándares y construir capacidades en el equipo.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">CTQ</div>
+        <div class="tool-name">Parámetros Críticos de Calidad</div>
+        <div class="tool-desc">Características internas del producto que son necesarias para los clientes. El CTQ define qué debe producirse para satisfacer las necesidades del cliente con la calidad esperada.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-abbr">MTBF</div>
+        <div class="tool-name">Tiempo Medio Entre Fallas</div>
+        <div class="tool-desc">Indica el tiempo promedio que el sistema puede operar después de una falla. Nos permite conocer la frecuencia con que suceden las averías y planificar el mantenimiento preventivo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PASOS PARA ENSEÑAR -->
+<section style="background: var(--navy); padding: 6rem 2rem;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Pilar de Educación y Entrenamiento</span>
+      <h2 class="section-title">Cómo Transferir Conocimiento</h2>
+      <p class="section-desc">El proceso de 5 pasos para enseñar y transferir conocimiento de manera efectiva en el puesto de trabajo.</p>
+    </div>
+    <div class="perdidas-grid reveal" style="grid-template-columns: repeat(auto-fill, minmax(200px,1fr));">
+      <div style="background:var(--navy-light);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1.5rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--yellow);line-height:1;">1</div>
+        <div style="color:var(--white);font-weight:600;margin:0.5rem 0;font-size:0.9rem;">El experto dice y hace</div>
+        <div style="color:var(--gray-light);font-size:0.8rem;line-height:1.5;">El aprendiz observa atentamente.</div>
+      </div>
+      <div style="background:var(--navy-light);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1.5rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--yellow);line-height:1;">2</div>
+        <div style="color:var(--white);font-weight:600;margin:0.5rem 0;font-size:0.9rem;">El aprendiz dice</div>
+        <div style="color:var(--gray-light);font-size:0.8rem;line-height:1.5;">El experto hace lo que el aprendiz indica.</div>
+      </div>
+      <div style="background:var(--navy-light);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1.5rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--yellow);line-height:1;">3</div>
+        <div style="color:var(--white);font-weight:600;margin:0.5rem 0;font-size:0.9rem;">Retroalimentación</div>
+        <div style="color:var(--gray-light);font-size:0.8rem;line-height:1.5;">El experto retroalimenta al aprendiz.</div>
+      </div>
+      <div style="background:var(--navy-light);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1.5rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--yellow);line-height:1;">4</div>
+        <div style="color:var(--white);font-weight:600;margin:0.5rem 0;font-size:0.9rem;">El aprendiz dice y hace</div>
+        <div style="color:var(--gray-light);font-size:0.8rem;line-height:1.5;">El experto observa y valida.</div>
+      </div>
+      <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.3);border-radius:6px;padding:1.5rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--yellow);line-height:1;">5</div>
+        <div style="color:var(--white);font-weight:600;margin:0.5rem 0;font-size:0.9rem;">Registrar</div>
+        <div style="color:var(--gray-light);font-size:0.8rem;line-height:1.5;">Actualizar la Matriz de Habilidades.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Pon a Prueba tu Conocimiento</span>
+      <h2 class="section-title">Quiz LEAN</h2>
+      <p class="section-desc">Comprueba cuánto has aprendido sobre el sistema LEAN con estas preguntas de opción múltiple.</p>
+    </div>
+    <div class="quiz-box reveal">
+      <div id="quizMain">
+        <div class="quiz-counter" id="quizCounter">Pregunta 1 de 8</div>
+        <div class="quiz-progress"><div class="quiz-bar" id="quizBar" style="width:12.5%"></div></div>
+        <div class="quiz-q" id="quizQ"></div>
+        <div class="quiz-options" id="quizOpts"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <button class="quiz-next" id="quizNext">Siguiente pregunta →</button>
+      </div>
+      <div class="quiz-result" id="quizResult" style="display:none">
+        <div class="quiz-score" id="quizScore"></div>
+        <div class="quiz-score-msg" id="quizMsg"></div>
+        <button class="quiz-restart" onclick="startQuiz()">Volver a intentar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Sistema LEAN — Guía Interactiva de Mejora Continua</p>
+  <p style="margin-top:0.5rem; color: var(--gray);">Hacia cero pérdidas · Hacia una cultura de alto desempeño</p>
+</footer>
+
+<script>
+// ============= FLIP CARDS (click on mobile) =============
+document.querySelectorAll('.flip-card').forEach(card => {
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+});
+
+// ============= PILARES TABS =============
+document.querySelectorAll('.pilar-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const idx = tab.dataset.pilar;
+    document.querySelectorAll('.pilar-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pilar-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.pilar-panel')[idx].classList.add('active');
+  });
+});
+
+// ============= PASOS GA (accordion) =============
+document.querySelectorAll('.paso-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.paso-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// ============= REVEAL ON SCROLL =============
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ============= QUIZ =============
+const questions = [
+  {
+    q: "¿Cuáles son los dos grandes objetivos del Sistema LEAN?",
+    opts: [
+      "Reducir costos y aumentar producción",
+      "Sistematizar la erradicación de pérdidas y desarrollar capacidades",
+      "Mejorar la calidad y reducir personal",
+      "Aumentar ventas y diversificar productos"
+    ],
+    ans: 1,
+    feedback: "¡Exacto! Los dos objetivos LEAN son: 1) Sistematización de la erradicación de pérdidas (hacia cero pérdidas) y 2) Desarrollo de capacidades (hacia una cultura de alto desempeño)."
+  },
+  {
+    q: "¿Qué significa el acrónimo OEE?",
+    opts: [
+      "Organización, Eficiencia y Estándares",
+      "Objetivos, Estrategia y Evaluación",
+      "Eficiencia Global de los Equipos",
+      "Operación, Energía y Equipo"
+    ],
+    ans: 2,
+    feedback: "Correcto. OEE significa Eficiencia Global de los Equipos (Overall Equipment Effectiveness). Se calcula multiplicando Disponibilidad × Desempeño × Calidad."
+  },
+  {
+    q: "¿Qué son las LUP en el Pilar de Educación y Entrenamiento?",
+    opts: [
+      "Listas de Uso del Personal",
+      "Lecciones de Un Punto para transferir conocimiento específico",
+      "Lineamientos de Uso y Productividad",
+      "Logros de Unidad de Producción"
+    ],
+    ans: 1,
+    feedback: "Correcto. Las LUP (Lecciones de Un Punto) son una herramienta sencilla para transferir conocimiento sobre un tema determinado, breve y específico. Existen 3 tipos: Conocimiento Básico, Mejoras Implementadas y Solución de Problemas."
+  },
+  {
+    q: "En el Paso 0 de Gestión Autónoma, ¿cuál es el objetivo principal?",
+    opts: [
+      "Inspeccionar todos los componentes del equipo",
+      "Eliminar fuentes de contaminación",
+      "Transformar el lugar de trabajo mediante organización y orden",
+      "Establecer estándares de lubricación"
+    ],
+    ans: 2,
+    feedback: "Correcto. El Paso 0 busca transformar el lugar de trabajo por medio de la organización y orden, para que el lugar sea más agradable, seguro y limpio, garantizando la inocuidad del producto y la seguridad del trabajador."
+  },
+  {
+    q: "¿Qué herramienta LEAN se utiliza para definir contramedidas en Fuentes de Contaminación y Lugares de Difícil Acceso?",
+    opts: [
+      "OEE",
+      "DMS (Sistema de Gestión Diaria)",
+      "ECRS (Eliminar, Combinar, Reducir, Simplificar)",
+      "MTBF"
+    ],
+    ans: 2,
+    feedback: "Correcto. El Método ECRS (Eliminar, Combinar o Contener, Reducir y Simplificar) es la herramienta para definir e identificar las contramedidas que se aplicarán en las Fuentes de Contaminación (FC) y los Lugares de Difícil Acceso (LDA)."
+  },
+  {
+    q: "¿Cuántos tipos de anormalidades define el Sistema LEAN?",
+    opts: ["5", "6", "7", "8"],
+    ans: 2,
+    feedback: "Correcto. Los 7 tipos de anormalidades son: 1) Fallas Menores, 2) Condiciones Básicas, 3) Lugares de Difícil Acceso, 4) Fuentes de Contaminación, 5) Defectos de Calidad, 6) Objetos Innecesarios y 7) Condiciones Inseguras."
+  },
+  {
+    q: "¿Qué significa LILA en los estándares de Gestión Autónoma?",
+    opts: [
+      "Limpieza, Identificación, Lubricación y Análisis",
+      "Limpieza, Inspección, Lubricación y Ajuste",
+      "Liderazgo, Innovación, Logros y Acción",
+      "Localización, Inspección, Límites y Auditoría"
+    ],
+    ans: 1,
+    feedback: "Correcto. LILA significa Limpieza, Inspección, Lubricación y Ajuste. Es una herramienta que establece claramente cómo deben realizar los operadores estas cuatro actividades esenciales para mantener las condiciones básicas del equipo."
+  },
+  {
+    q: "¿Cuántos pilares tiene el Sistema LEAN?",
+    opts: ["5 pilares", "8 pilares", "10 pilares", "12 pilares"],
+    ans: 2,
+    feedback: "Correcto. El Sistema LEAN tiene 10 pilares: Liderazgo, Gestión Autónoma, Mejora Enfocada, Gestión de Calidad, Seguridad/Salud/Ambiente, Mantenimiento Progresivo, Educación y Entrenamiento, Gestión de Iniciativas, Organización y Red de Abastecimiento."
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function startQuiz() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('quizMain').style.display = 'block';
+  document.getElementById('quizResult').style.display = 'none';
+  loadQ();
+}
+
+function loadQ() {
+  answered = false;
+  const q = questions[current];
+  document.getElementById('quizCounter').textContent = `Pregunta ${current + 1} de ${questions.length}`;
+  document.getElementById('quizBar').style.width = `${((current + 1) / questions.length) * 100}%`;
+  document.getElementById('quizQ').textContent = q.q;
+  const opts = document.getElementById('quizOpts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = o;
+    btn.addEventListener('click', () => selectAns(i));
+    opts.appendChild(btn);
+  });
+  document.getElementById('quizFeedback').className = 'quiz-feedback';
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('quizNext').className = 'quiz-next';
+}
+
+function selectAns(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled = true);
+  btns[i].classList.add(i === q.ans ? 'correct' : 'wrong');
+  if (i === q.ans) { score++; btns[i].classList.add('correct'); } 
+  else { btns[q.ans].classList.add('correct'); }
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = q.feedback;
+  fb.className = 'quiz-feedback show ' + (i === q.ans ? 'ok' : 'fail');
+  document.getElementById('quizNext').className = 'quiz-next show';
+}
+
+document.getElementById('quizNext').addEventListener('click', () => {
+  current++;
+  if (current < questions.length) { loadQ(); }
+  else {
+    document.getElementById('quizMain').style.display = 'none';
+    const res = document.getElementById('quizResult');
+    res.style.display = 'block';
+    document.getElementById('quizScore').textContent = `${score}/${questions.length}`;
+    const pct = (score / questions.length) * 100;
+    let msg = pct >= 87 ? '🏆 ¡Excelente! Dominas el sistema LEAN.' :
+              pct >= 62 ? '👍 Buen trabajo. Repasa los conceptos donde tuviste dudas.' :
+              '📚 Sigue aprendiendo. Te recomendamos revisar el material de nuevo.';
+    document.getElementById('quizMsg').textContent = msg;
+  }
+});
+
+startQuiz();
+</script>
+</body>
+</html>
